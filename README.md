@@ -1,2 +1,2 @@
 # Customer-Segmentation-for-TargetedMarketing
-Data analytics pipeline to segment bank customers based on demographic and behavioral attributes to optimize targeted marketing strategies.
+Data analytics pipeline to segment bank customers based on demographic and behavioral attributes to optimize targeted marketing strategies. The project involves extracting customer data from a MySQL database, cleaning and preprocessing using Python (Pandas), engineering features like engagement and financial behavior, and visualizing customer segments using Matplotlib and Seaborn. This enabled identification of high-value customer clusters and campaign personalization opportunities.
