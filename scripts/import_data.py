@@ -17,3 +17,4 @@ df = pd.read_sql(query, conn)
 
 # Preview
 print(df.head())
+
