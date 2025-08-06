@@ -1,45 +1,60 @@
+
 import pandas as pd
 import mysql.connector
+import os
 
-# 1. Load data from MySQL
-conn = mysql.connector.connect(
-    host='localhost',
-    user='root',
-    password='admin',
-    database='bank_marketing'
-)
+# 1. Connect to MySQL
+try:
+    conn = mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='admin',
+        database='bank_marketing'
+    )
+    if conn.is_connected():
+        print("✅ Connected to MySQL")
+    else:
+        raise Exception("❌ Failed to connect to MySQL")
 
-query = "SELECT * FROM bank_data"
-df = pd.read_sql(query, conn)
+    # 2. Load data from MySQL
+    query = "SELECT * FROM bank_data"
+    df = pd.read_sql(query, conn)
 
-# 2. Rename 'default' column if needed (MySQL reserved keyword)
-df.rename(columns={'default_status': 'default'}, inplace=True)
+    if df.empty:
+        raise ValueError("❌ The 'bank_data' table is empty.")
 
-# 3. Check basic structure
-print("\n🔹 Shape of data:", df.shape)
-print("\n🔹 Data types:\n", df.dtypes)
+    # 3. Rename 'default' column if it exists
+    if 'default' in df.columns:
+        df.rename(columns={'default': 'default_status'}, inplace=True)
 
-# 4. Check for missing values
-print("\n🔹 Missing values:\n", df.isnull().sum())
+    # 4. Standardize categorical fields
+    cat_cols = ['job', 'marital', 'education', 'default_status',
+                'housing', 'loan', 'contact', 'month', 'poutcome', 'y']
+    for col in cat_cols:
+        if col in df.columns:
+            df[col] = df[col].astype(str).str.strip().str.lower()
 
-# 5. Standardize categorical fields (trim spaces, lowercase)
-cat_cols = ['job', 'marital', 'education', 'default',
-            'housing', 'loan', 'contact', 'month', 'poutcome', 'y']
+    # 5. Convert yes/no fields to binary
+    binary_map = {'yes': 1, 'no': 0}
+    for col in ['default_status', 'housing', 'loan', 'y']:
+        if col in df.columns:
+            df[col] = df[col].map(binary_map)
 
-for col in cat_cols:
-    df[col] = df[col].str.strip().str.lower()
+    # 6. Print y column distribution
+    if 'y' in df.columns:
+        print("🔍 Value counts for 'y':")
+        print(df['y'].value_counts(dropna=False))
 
-# 6. Convert 'yes'/'no' fields to binary
-binary_map = {'yes': 1, 'no': 0}
-df['default'] = df['default'].map(binary_map)
-df['housing'] = df['housing'].map(binary_map)
-df['loan'] = df['loan'].map(binary_map)
-df['y'] = df['y'].map(binary_map)
+    # 7. Save cleaned CSV
+    os.makedirs("data", exist_ok=True)
+    save_path = os.path.abspath("data/cleaned_bank_data.csv")
+    df.to_csv(save_path, index=False)
+    print(f"✅ Cleaned data saved to: {save_path}")
 
-# 7. Identify and handle outliers (optional - here we just flag them)
-outliers = df[df['balance'] < -1000]
-print("\n🔹 Potential outliers (balance < -1000):\n", outliers)
+except Exception as e:
+    print("❌ ERROR:", e)
 
-# 8. Save cleaned data for next step
-df.to_csv("data/cleaned_bank_data.csv", index=False)
-print("\n✅ Cleaned data saved to: data/cleaned_bank_data.csv")
+finally:
+    if 'conn' in locals() and conn.is_connected():
+        conn.close()
+        print("🔌 MySQL connection closed.")
