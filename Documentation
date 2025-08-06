@@ -1,1 +1,49 @@
+Bank Marketing Project - Technical Summary
+Project Overview
+This project analyzes customer segmentation and subscription patterns from a bank marketing dataset. The objective is to identify trends by education, job, and age to improve targeted marketing efforts.
+Tools & Technologies Used
+- Python 3.13
+- pandas, matplotlib, SQLAlchemy, mysql-connector-python
+- MySQL Server + Workbench (local setup)
+- Jupyter Notebook & Terminal for execution
+Project Steps Completed
+1.	Data Import & Setup
+- Imported raw “bank.csv” using MySQL Workbench Table Data Import Wizard.
+- Created MySQL schema “bank_marketing” and table “bank_data”.
+- Renamed “deposit” column to “y” for label alignment.
+2.	Data Cleaning (Python)
+- Used “final_clean_data.py” to map categorical values (“yes/no” to 1/0).
+- Standardized column names (e.g., “default” to “default_status”).
+- Saved output as “cleaned_bank_data.csv”.
+3.	MySQL Table Load
+- Used “load_cleaned_csv_to_mysql.py” to insert cleaned data using SQLAlchemy.
+- Loaded into “bank_data” table with “if_exists='replace'” mode.
+4.	Stored Procedure Creation
+- Created three stored procedures:
+  • GetSubscriptionByEducation
+  • GetAvgBalanceByJob
+  • GetSubscriptionByAgeGroup
+- These group and summarize data for visualization.
+5.	Python-Based Analysis and Visualization
+- Used Jupyter Notebook and standalone Python scripts to connect to the MySQL database and run analytics.
+- Leveraged ‘mysql-connector-python’ to call stored procedures from MySQL.
+- Results were loaded into pandas DataFrames using ‘cursor.stored_results()’ and converted to tabular format.
+- Implemented plots using ‘matplotlib’ to visually compare:
+  • Subscription counts across education levels
+  • Average balances by profession
+  • Subscription rate percentages across defined age groups.
+- Scripts used include:
+  • clean_data.py: for standardizing and exporting clean data
+  • load_cleaned_csv_to_mysql.py: for loading cleaned data into MySQL
+  • analyze_bank_data.py: for executing procedures and plotting subplots.
+- Plots were generated using ‘matplotlib.pyplot.subplots()’ with clear labels and layout formatting for readability.
+- Jupyter environment facilitated modular testing, data inspection, and debugging in an interactive way.
+6.	Deliverables
+- PowerPoint: `Bank_Marketing_Insights.pptx`
+- Word Documentation: `Bank_Marketing_Insights_Documentation.docx`
+- Final Data: `cleaned_bank_data.csv`
+Additional Notes
+- Data access was handled using mysql-connector
+- Stored procedure results accessed via `cursor.stored_results()` for compatibility.
+- Plot styling used default matplotlib themes with clear legends.
 
