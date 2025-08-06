@@ -47,3 +47,46 @@ Additional Notes
 - Stored procedure results accessed via `cursor.stored_results()` for compatibility.
 - Plot styling used default matplotlib themes with clear legends.
 
+
+Python Script Documentation
+
+clean_data.py – Data Cleaning & Preprocessing
+Purpose:
+To clean, standardize, and prepare raw bank marketing data from MySQL for analysis.
+Key Operations:
+- Connects to MySQL (`bank_marketing.bank_data`) using `mysql.connector`
+- Reads raw data into a pandas DataFrame using `pd.read_sql()`
+- Renames reserved column `default` to `default_status`
+- Standardizes categorical columns like `job`, `education`, etc.
+- Maps 'yes'/'no' fields (e.g., `y`, `loan`) to binary values (1/0)
+- Prints `y` value counts for verification
+- Saves cleaned data to `data/cleaned_bank_data.csv`
+Output:
+Cleaned, consistent CSV file ready for loading into MySQL.
+load_cleaned_csv_to_mysql.py – Load Cleaned Data into MySQL
+Purpose:
+To load cleaned data from CSV into the MySQL database.
+Key Operations:
+- Reads `cleaned_bank_data.csv` into a DataFrame
+- Connects to MySQL using `SQLAlchemy`
+- Loads data into `bank_marketing.bank_data` using `df.to_sql()`
+- Replaces existing table content to maintain freshness
+Output:
+Updated `bank_data` table in MySQL with clean data.
+analyze_bank_data.py – Procedure Execution & Visualization
+Purpose:
+To extract aggregated insights using stored procedures and visualize them.
+Key Operations:
+- Connects to MySQL using `mysql.connector`
+- Calls 3 stored procedures:
+   • GetSubscriptionByEducation
+   • GetAvgBalanceByJob
+   • GetSubscriptionByAgeGroup
+- Converts stored results into DataFrames
+- Generates 3 subplot visualizations using `matplotlib`
+   • Subscriptions by Education
+   • Average Balance by Job
+   • Subscription Rate by Age Group
+Output:
+Interactive charts for data-driven decision-making.
+
